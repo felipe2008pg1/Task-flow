@@ -1,654 +1,564 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TaskFlow</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow Studio | Enterprise Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-blur: rgba(30, 41, 59, 0.7);
+            --borda-suave: rgba(255, 255, 255, 0.05);
+            --text-main: #f8fafc;
+            --text-muted: #64748b;
+            --brand-color: #3b82f6;
+            --brand-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            --success-color: #10b981;
+            --alert-color: #f59e0b;
+        }
 
-    :root {
-      --bg:        #0d0d12;
-      --surface:   #15151e;
-      --border:    #1f1f2e;
-      --accent:    #7c6aff;
-      --accent2:   #ff6a9b;
-      --green:     #34d399;
-      --yellow:    #fbbf24;
-      --red:       #f87171;
-      --text:      #e8e8f0;
-      --muted:     #6b6b85;
-      --radius:    12px;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
 
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
+        body {
+            background-color: #030712;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
+            color: var(--text-main);
+            padding: 60px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-    /* ── LAYOUT ─────────────────────────────────── */
-    .layout { display: flex; min-height: 100vh; }
+        header {
+            width: 100%;
+            max-width: 1200px;
+            margin-bottom: 48px;
+            text-align: left;
+        }
 
-    /* ── SIDEBAR ────────────────────────────────── */
-    .sidebar {
-      width: 260px;
-      flex-shrink: 0;
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      padding: 28px 20px;
-      gap: 32px;
-    }
+        header .badge {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
 
-    .logo {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 22px;
-      letter-spacing: -0.5px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .logo-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); display: inline-block; }
+        header h1 {
+            font-size: 2.6rem;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            background: linear-gradient(to right, #ffffff 40%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
 
-    .nav { display: flex; flex-direction: column; gap: 4px; }
-    .nav-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 14px; border-radius: 8px;
-      cursor: pointer; color: var(--muted);
-      font-size: 14px; font-weight: 500;
-      transition: all 0.15s;
-      border: none; background: none; width: 100%; text-align: left;
-    }
-    .nav-item:hover { background: var(--border); color: var(--text); }
-    .nav-item.active { background: rgba(124,106,255,0.15); color: var(--accent); }
-    .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+        header p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
 
-    .sidebar-section-title {
-      font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
-      text-transform: uppercase; color: var(--muted);
-      padding: 0 14px;
-    }
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+        }
 
-    /* ── MAIN ───────────────────────────────────── */
-    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .card {
+            background: var(--bg-blur);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--borda-suave);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
 
-    .topbar {
-      padding: 20px 32px;
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; gap: 16px;
-    }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        }
 
-    .topbar h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: 24px; font-weight: 700;
-      flex: 1;
-    }
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.1);
+        }
 
-    .btn {
-      padding: 10px 20px; border-radius: var(--radius);
-      border: none; cursor: pointer;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px; font-weight: 500;
-      transition: all 0.15s;
-    }
-    .btn-primary {
-      background: var(--accent); color: #fff;
-    }
-    .btn-primary:hover { background: #9580ff; transform: translateY(-1px); }
-    .btn-ghost {
-      background: transparent; color: var(--muted);
-      border: 1px solid var(--border);
-    }
-    .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+        .card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-    /* ── STATS ──────────────────────────────────── */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      padding: 24px 32px 0;
-    }
+        .form-group {
+            margin-bottom: 20px;
+        }
 
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-      display: flex; flex-direction: column; gap: 8px;
-      animation: fadeUp 0.4s ease both;
-    }
-    .stat-label { font-size: 12px; color: var(--muted); font-weight: 500; }
-    .stat-value {
-      font-family: 'Syne', sans-serif;
-      font-size: 32px; font-weight: 700;
-    }
-    .stat-card:nth-child(1) .stat-value { color: var(--text); }
-    .stat-card:nth-child(2) .stat-value { color: var(--yellow); }
-    .stat-card:nth-child(3) .stat-value { color: var(--accent); }
-    .stat-card:nth-child(4) .stat-value { color: var(--green); }
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
 
-    /* ── FILTERS ────────────────────────────────── */
-    .filters {
-      display: flex; align-items: center; gap: 12px;
-      padding: 20px 32px 0;
-    }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: rgba(3, 7, 18, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
 
-    .filter-btn {
-      padding: 6px 16px; border-radius: 20px;
-      border: 1px solid var(--border);
-      background: transparent; color: var(--muted);
-      font-size: 13px; cursor: pointer;
-      transition: all 0.15s;
-      font-family: 'DM Sans', sans-serif;
-    }
-    .filter-btn:hover, .filter-btn.active {
-      background: var(--accent); color: #fff; border-color: var(--accent);
-    }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--brand-color);
+            background-color: rgba(3, 7, 18, 0.9);
+            box-shadow: 0 0 0 1px var(--brand-color);
+        }
 
-    /* ── TASK LIST ──────────────────────────────── */
-    .tasks-container { flex: 1; overflow-y: auto; padding: 20px 32px 40px; }
+        input::placeholder, textarea::placeholder {
+            color: #334155;
+        }
 
-    .tasks-list { display: flex; flex-direction: column; gap: 10px; }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: var(--brand-gradient);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
 
-    .task-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px 20px;
-      display: flex; align-items: center; gap: 16px;
-      transition: all 0.2s;
-      animation: fadeUp 0.3s ease both;
-      cursor: pointer;
-    }
-    .task-card:hover { border-color: var(--accent); transform: translateX(2px); }
-    .task-card.done { opacity: 0.5; }
+        button:hover {
+            opacity: 0.95;
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+            transform: scale(1.01);
+        }
 
-    .task-check {
-      width: 20px; height: 20px; border-radius: 50%;
-      border: 2px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; cursor: pointer; transition: all 0.2s;
-      font-size: 11px; color: #fff;
-    }
-    .task-check.checked { background: var(--green); border-color: var(--green); }
-    .task-check:hover { border-color: var(--green); }
+        .status-msg {
+            margin-top: 14px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            min-height: 20px;
+        }
 
-    .task-info { flex: 1; min-width: 0; }
-    .task-title { font-size: 15px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .task-card.done .task-title { text-decoration: line-through; }
-    .task-meta { display: flex; gap: 10px; margin-top: 4px; align-items: center; }
+        .task-section {
+            grid-column: 1 / -1;
+            background: var(--bg-blur);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--borda-suave);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+        }
 
-    .badge {
-      padding: 2px 10px; border-radius: 20px;
-      font-size: 11px; font-weight: 600; letter-spacing: 0.3px;
-    }
-    .badge-pending    { background: rgba(251,191,36,0.15);  color: var(--yellow); }
-    .badge-in_progress{ background: rgba(124,106,255,0.15); color: var(--accent); }
-    .badge-done       { background: rgba(52,211,153,0.15);  color: var(--green); }
-    .badge-high   { background: rgba(248,113,113,0.15); color: var(--red); }
-    .badge-medium { background: rgba(251,191,36,0.15);  color: var(--yellow); }
-    .badge-low    { background: rgba(100,100,120,0.15); color: var(--muted); }
+        .search-box {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+            background: rgba(3, 7, 18, 0.4);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
 
-    .task-date { font-size: 12px; color: var(--muted); }
+        .search-box input {
+            max-width: 400px;
+        }
 
-    .cat-dot {
-      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-    }
+        .search-box button {
+            max-width: 180px;
+        }
 
-    .task-actions { display: flex; gap: 8px; opacity: 0; transition: opacity 0.15s; }
-    .task-card:hover .task-actions { opacity: 1; }
-    .action-btn {
-      width: 30px; height: 30px; border-radius: 8px;
-      background: var(--border); border: none;
-      color: var(--muted); cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; transition: all 0.15s;
-    }
-    .action-btn:hover { background: var(--red); color: #fff; }
-    .action-btn.edit:hover { background: var(--accent); color: #fff; }
+        .task-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
 
-    .empty-state {
-      display: flex; flex-direction: column; align-items: center;
-      gap: 12px; padding: 60px 0;
-      color: var(--muted); text-align: center;
-    }
-    .empty-icon { font-size: 40px; }
+        .task-card {
+            background-color: rgba(3, 7, 18, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-left: 4px solid var(--alert-color);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
 
-    /* ── MODAL ──────────────────────────────────── */
-    .overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.7);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 100; opacity: 0; pointer-events: none;
-      transition: opacity 0.2s;
-    }
-    .overlay.open { opacity: 1; pointer-events: all; }
+        .task-card:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+            background-color: rgba(3, 7, 18, 0.6);
+            transform: translateX(4px);
+        }
 
-    .modal {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 28px;
-      width: 480px; max-width: 95vw;
-      transform: translateY(20px); transition: transform 0.2s;
-    }
-    .overlay.open .modal { transform: translateY(0); }
+        .task-card.Concluída {
+            border-left-color: var(--success-color);
+            opacity: 0.6;
+        }
 
-    .modal-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 20px; font-weight: 700; margin-bottom: 20px;
-    }
+        .task-card.Concluída h4 {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
 
-    .form-grid { display: flex; flex-direction: column; gap: 14px; }
-    .form-row  { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .task-info h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 6px;
+        }
 
-    .field { display: flex; flex-direction: column; gap: 6px; }
-    .field label { font-size: 12px; color: var(--muted); font-weight: 500; }
-    .field input, .field select, .field textarea {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px 12px;
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.15s;
-    }
-    .field input:focus, .field select:focus, .field textarea:focus {
-      border-color: var(--accent);
-    }
-    .field textarea { resize: none; height: 80px; }
-    .field select option { background: var(--surface); }
+        .task-info p {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
 
-    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+        .task-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
 
-    /* ── TOAST ──────────────────────────────────── */
-    .toast {
-      position: fixed; bottom: 24px; right: 24px;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px 20px; font-size: 14px;
-      transform: translateY(80px); transition: transform 0.3s;
-      z-index: 200;
-    }
-    .toast.show { transform: translateY(0); }
-    .toast.success { border-color: var(--green); color: var(--green); }
-    .toast.error   { border-color: var(--red);   color: var(--red);   }
+        .task-badge {
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 99px;
+            background-color: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            white-space: nowrap;
+        }
 
-    /* ── ANIMATIONS ─────────────────────────────── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+        /* Botão específico para concluir dentro da lista */
+        .btn-done {
+            width: auto;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--success-color);
+            box-shadow: none;
+        }
 
-    /* ── SCROLLBAR ──────────────────────────────── */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-  </style>
+        .btn-done:hover {
+            background: var(--success-color);
+            color: white;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+        }
+    </style>
 </head>
 <body>
 
-<div class="layout">
+    <header>
+        <span class="badge">v1.0.0 Production</span>
+        <h1>TaskFlow Core</h1>
+        <p>Console administrativo para gerenciamento e operações em ambiente MySQL.</p>
+    </header>
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="logo">
-      <span class="logo-dot"></span> TaskFlow
-    </div>
-
-    <nav class="nav">
-      <span class="sidebar-section-title">Menu</span>
-      <button class="nav-item active" onclick="filterByStatus(null)">
-        <span class="nav-icon">📋</span> Todas as Tarefas
-      </button>
-      <button class="nav-item" onclick="filterByStatus('pending')">
-        <span class="nav-icon">⏳</span> Pendentes
-      </button>
-      <button class="nav-item" onclick="filterByStatus('in_progress')">
-        <span class="nav-icon">🔄</span> Em Andamento
-      </button>
-      <button class="nav-item" onclick="filterByStatus('done')">
-        <span class="nav-icon">✅</span> Concluídas
-      </button>
-    </nav>
-
-    <div style="margin-top:auto; padding: 12px 14px; background: rgba(124,106,255,0.08); border-radius: var(--radius); border: 1px solid rgba(124,106,255,0.2);">
-      <div style="font-size:12px; color: var(--accent); font-weight:600; margin-bottom:4px;">API Backend</div>
-      <div style="font-size:11px; color: var(--muted);">FastAPI + MySQL</div>
-      <div id="api-status" style="font-size:11px; margin-top:6px; color: var(--muted);">⚪ Verificando…</div>
-    </div>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="main">
-    <div class="topbar">
-      <h1>Tarefas</h1>
-      <button class="btn btn-ghost" onclick="loadTasks()">↺ Atualizar</button>
-      <button class="btn btn-primary" onclick="openModal()">+ Nova Tarefa</button>
-    </div>
-
-    <!-- STATS -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <span class="stat-label">TOTAL</span>
-        <span class="stat-value" id="stat-total">—</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-label">PENDENTES</span>
-        <span class="stat-value" id="stat-pending">—</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-label">EM ANDAMENTO</span>
-        <span class="stat-value" id="stat-progress">—</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-label">CONCLUÍDAS</span>
-        <span class="stat-value" id="stat-done">—</span>
-      </div>
-    </div>
-
-    <!-- FILTERS -->
-    <div class="filters">
-      <span style="font-size:13px; color:var(--muted);">Prioridade:</span>
-      <button class="filter-btn active" onclick="setPriority(null, this)">Todas</button>
-      <button class="filter-btn" onclick="setPriority('high', this)">Alta</button>
-      <button class="filter-btn" onclick="setPriority('medium', this)">Média</button>
-      <button class="filter-btn" onclick="setPriority('low', this)">Baixa</button>
-    </div>
-
-    <!-- TASK LIST -->
-    <div class="tasks-container">
-      <div class="tasks-list" id="tasks-list">
-        <div class="empty-state">
-          <div class="empty-icon">⏳</div>
-          <div>Carregando tarefas…</div>
+    <div class="grid-layout">
+        
+        <div class="card">
+            <h3>👤 Diretório de Usuários</h3>
+            <form id="userForm">
+                <div class="form-group">
+                    <label>Nome do Desenvolvedor</label>
+                    <input type="text" id="nome" required placeholder="Nome e sobrenome">
+                </div>
+                <div class="form-group">
+                    <label>E-mail Corporativo</label>
+                    <input type="email" id="email" required placeholder="nome@provedor.com">
+                </div>
+                <button type="submit">Registrar Usuário</button>
+            </form>
+            <p id="userMsg" class="status-msg"></p>
         </div>
-      </div>
-    </div>
-  </main>
-</div>
 
-<!-- MODAL -->
-<div class="overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
-  <div class="modal">
-    <div class="modal-title" id="modal-title">Nova Tarefa</div>
-    <div class="form-grid">
-      <div class="field">
-        <label>Título *</label>
-        <input type="text" id="f-title" placeholder="O que precisa ser feito?" />
-      </div>
-      <div class="field">
-        <label>Descrição</label>
-        <textarea id="f-desc" placeholder="Detalhes adicionais…"></textarea>
-      </div>
-      <div class="form-row">
-        <div class="field">
-          <label>Status</label>
-          <select id="f-status">
-            <option value="pending">Pendente</option>
-            <option value="in_progress">Em Andamento</option>
-            <option value="done">Concluída</option>
-          </select>
+        <div class="card">
+            <h3>📁 Escopo de Categorias</h3>
+            <form id="categoryForm">
+                <div class="form-group">
+                    <label>ID Identificador do Dono</label>
+                    <input type="number" id="catUserId" required placeholder="Ex: 1">
+                </div>
+                <div class="form-group">
+                    <label>Tag / Nome do Grupo</label>
+                    <input type="text" id="catNome" required placeholder="Ex: Infraestrutura, Backend">
+                </div>
+                <button type="submit">Instanciar Categoria</button>
+            </form>
+            <p id="categoryMsg" class="status-msg"></p>
         </div>
-        <div class="field">
-          <label>Prioridade</label>
-          <select id="f-priority">
-            <option value="medium">Média</option>
-            <option value="high">Alta</option>
-            <option value="low">Baixa</option>
-          </select>
+
+        <div class="card">
+            <h3>⚡ Nova Entry de Tarefa</h3>
+            <form id="taskForm">
+                <div class="form-group" style="display: flex; gap: 14px;">
+                    <div style="flex: 1;">
+                        <label>ID Usuário</label>
+                        <input type="number" id="taskUserId" required placeholder="Ex: 1">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>ID Categoria</label>
+                        <input type="number" id="taskCatId" placeholder="Opcional">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Título da Task</label>
+                    <input type="text" id="taskTitulo" required placeholder="Ex: Otimizar queries">
+                </div>
+                <div class="form-group">
+                    <label>Payload descritivo</label>
+                    <textarea id="taskDesc" rows="1" placeholder="Resumo dos objetivos..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Prioridade</label>
+                    <select id="taskPrioridade">
+                        <option value="Baixa">Baixa</option>
+                        <option value="Média" selected>Média</option>
+                        <option value="Alta">Alta</option>
+                    </select>
+                </div>
+                <button type="submit">Criar Instância</button>
+            </form>
+            <p id="taskMsg" class="status-msg"></p>
         </div>
-      </div>
-      <div class="form-row">
-        <div class="field">
-          <label>Prazo</label>
-          <input type="date" id="f-date" />
-        </div>
-        <div class="field">
-          <label>Categoria</label>
-          <select id="f-category">
-            <option value="">— Sem categoria —</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveTask()">Salvar Tarefa</button>
-    </div>
-  </div>
-</div>
 
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
-
-<script>
-  const API = 'http://localhost:8000';
-  const USER_ID = 1; // Demo user
-
-  let currentStatus   = null;
-  let currentPriority = null;
-  let editingTaskId   = null;
-  let categories      = [];
-
-  // ── API helpers ────────────────────────────────────────
-  async function apiFetch(path, opts = {}) {
-    const res = await fetch(API + path, {
-      headers: { 'Content-Type': 'application/json' },
-      ...opts,
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    if (res.status === 204) return null;
-    return res.json();
-  }
-
-  // ── Toast ──────────────────────────────────────────────
-  function toast(msg, type = 'success') {
-    const el = document.getElementById('toast');
-    el.textContent = msg;
-    el.className = `toast ${type} show`;
-    setTimeout(() => el.classList.remove('show'), 3000);
-  }
-
-  // ── Status check ───────────────────────────────────────
-  async function checkApi() {
-    const el = document.getElementById('api-status');
-    try {
-      await apiFetch('/');
-      el.textContent = '🟢 API conectada';
-      el.style.color = 'var(--green)';
-    } catch {
-      el.textContent = '🔴 API offline';
-      el.style.color = 'var(--red)';
-    }
-  }
-
-  // ── Stats ──────────────────────────────────────────────
-  async function loadStats() {
-    try {
-      const s = await apiFetch(`/users/${USER_ID}/stats`);
-      document.getElementById('stat-total').textContent   = s.total;
-      document.getElementById('stat-pending').textContent = s.pending;
-      document.getElementById('stat-progress').textContent= s.in_progress;
-      document.getElementById('stat-done').textContent    = s.done;
-    } catch {}
-  }
-
-  // ── Categories ─────────────────────────────────────────
-  async function loadCategories() {
-    try {
-      categories = await apiFetch(`/users/${USER_ID}/categories`);
-      const sel = document.getElementById('f-category');
-      sel.innerHTML = '<option value="">— Sem categoria —</option>';
-      categories.forEach(c => {
-        sel.innerHTML += `<option value="${c.id}">${c.name}</option>`;
-      });
-    } catch {}
-  }
-
-  // ── Tasks ──────────────────────────────────────────────
-  async function loadTasks() {
-    const list = document.getElementById('tasks-list');
-    list.innerHTML = '<div class="empty-state"><div class="empty-icon">⏳</div><div>Carregando…</div></div>';
-
-    let url = `/users/${USER_ID}/tasks`;
-    const params = [];
-    if (currentStatus)   params.push(`status=${currentStatus}`);
-    if (currentPriority) params.push(`priority=${currentPriority}`);
-    if (params.length)   url += '?' + params.join('&');
-
-    try {
-      const tasks = await apiFetch(url);
-      renderTasks(tasks);
-    } catch {
-      list.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div>Erro ao carregar. Verifique se a API está rodando.</div></div>';
-    }
-
-    await loadStats();
-  }
-
-  function renderTasks(tasks) {
-    const list = document.getElementById('tasks-list');
-    if (!tasks.length) {
-      list.innerHTML = '<div class="empty-state"><div class="empty-icon">🎉</div><div>Nenhuma tarefa encontrada</div></div>';
-      return;
-    }
-
-    const statusLabel = { pending: 'Pendente', in_progress: 'Em Andamento', done: 'Concluída' };
-    const priorityLabel = { low: 'Baixa', medium: 'Média', high: 'Alta' };
-
-    list.innerHTML = tasks.map((t, i) => {
-      const cat = t.category;
-      const catDot = cat ? `<span class="cat-dot" style="background:${cat.color}"></span><span style="font-size:12px;color:var(--muted)">${cat.name}</span>` : '';
-      const dateStr = t.due_date ? `<span class="task-date">📅 ${t.due_date}</span>` : '';
-      const checked = t.status === 'done' ? 'checked' : '';
-
-      return `
-        <div class="task-card ${t.status === 'done' ? 'done' : ''}" style="animation-delay:${i * 0.04}s">
-          <div class="task-check ${checked}" onclick="toggleDone(${t.id}, '${t.status}')">
-            ${checked ? '✓' : ''}
-          </div>
-          <div class="task-info">
-            <div class="task-title">${t.title}</div>
-            <div class="task-meta">
-              <span class="badge badge-${t.status}">${statusLabel[t.status]}</span>
-              <span class="badge badge-${t.priority}">${priorityLabel[t.priority]}</span>
-              ${catDot}
-              ${dateStr}
+        <div class="task-section">
+            <h3>📋 Query Inspector</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
+                Execute requisições analíticas para recuperar as tarefas vinculadas a esta conta no MySQL.
+            </p>
+            
+            <div class="search-box">
+                <input type="number" id="buscaUserId" placeholder="Inserir UID do usuário">
+                <button type="button" onclick="buscarTarefasDoUsuario()">Executar Query</button>
             </div>
-          </div>
-          <div class="task-actions">
-            <button class="action-btn edit" title="Editar" onclick="editTask(${t.id})">✎</button>
-            <button class="action-btn" title="Deletar" onclick="deleteTask(${t.id})">✕</button>
-          </div>
-        </div>`;
-    }).join('');
-  }
 
-  async function toggleDone(id, currentStatus) {
-    const newStatus = currentStatus === 'done' ? 'pending' : 'done';
-    try {
-      await apiFetch(`/tasks/${id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ status: newStatus }),
-      });
-      loadTasks();
-    } catch { toast('Erro ao atualizar', 'error'); }
-  }
+            <div id="listaTarefas" class="task-grid">
+                <p style="color: var(--text-muted); font-size: 0.9rem; font-style: italic;">
+                    Aguardando gatilho de busca para listar registros...
+                </p>
+            </div>
+        </div>
 
-  async function deleteTask(id) {
-    if (!confirm('Deletar esta tarefa?')) return;
-    try {
-      await apiFetch(`/tasks/${id}`, { method: 'DELETE' });
-      toast('Tarefa deletada');
-      loadTasks();
-    } catch { toast('Erro ao deletar', 'error'); }
-  }
+    </div>
 
-  // ── Modal ──────────────────────────────────────────────
-  function openModal(task = null) {
-    editingTaskId = task ? task.id : null;
-    document.getElementById('modal-title').textContent = task ? 'Editar Tarefa' : 'Nova Tarefa';
-    document.getElementById('f-title').value    = task?.title       ?? '';
-    document.getElementById('f-desc').value     = task?.description ?? '';
-    document.getElementById('f-status').value   = task?.status      ?? 'pending';
-    document.getElementById('f-priority').value = task?.priority    ?? 'medium';
-    document.getElementById('f-date').value     = task?.due_date    ?? '';
-    document.getElementById('f-category').value = task?.category_id ?? '';
-    document.getElementById('modal-overlay').classList.add('open');
-  }
+    <script>
+        const API_URL = "http://127.0.0.1:8000";
 
-  function closeModal() {
-    document.getElementById('modal-overlay').classList.remove('open');
-    editingTaskId = null;
-  }
+        async function tratarResposta(response) {
+            if (!response.ok) {
+                const erroData = await response.json();
+                throw new Error(erroData.detail || "Erro desconhecido na requisição.");
+            }
+            return await response.json();
+        }
 
-  function handleOverlayClick(e) {
-    if (e.target === e.currentTarget) closeModal();
-  }
+        // 1. REGISTRO DE USUÁRIO
+        document.getElementById("userForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const msg = document.getElementById("userMsg");
+            msg.style.color = "#3b82f6";
+            msg.textContent = "Processando...";
 
-  async function editTask(id) {
-    try {
-      // Buscar dados da tarefa da lista já carregada via re-fetch simples
-      const tasks = await apiFetch(`/users/${USER_ID}/tasks`);
-      const task = tasks.find(t => t.id === id);
-      if (task) openModal(task);
-    } catch { toast('Erro ao carregar tarefa', 'error'); }
-  }
+            try {
+                const res = await fetch(`${API_URL}/users`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        name: document.getElementById("nome").value,
+                        email: document.getElementById("email").value
+                    })
+                });
+                const usuario = await tratarResposta(res);
+                msg.style.color = "#10b981";
+                msg.textContent = `Sucesso! ID: ${usuario.id}`;
+                document.getElementById("userForm").reset();
+            } catch (err) {
+                msg.style.color = "#ef4444";
+                msg.textContent = err.message;
+            }
+        });
 
-  async function saveTask() {
-    const title = document.getElementById('f-title').value.trim();
-    if (!title) { toast('Título é obrigatório', 'error'); return; }
+        // 2. REGISTRO DE CATEGORIA
+        document.getElementById("categoryForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const msg = document.getElementById("categoryMsg");
+            msg.style.color = "#3b82f6";
+            msg.textContent = "Processando...";
 
-    const payload = {
-      title,
-      description:  document.getElementById('f-desc').value || null,
-      status:       document.getElementById('f-status').value,
-      priority:     document.getElementById('f-priority').value,
-      due_date:     document.getElementById('f-date').value   || null,
-      category_id:  document.getElementById('f-category').value ? +document.getElementById('f-category').value : null,
-    };
+            try {
+                const res = await fetch(`${API_URL}/categories`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        user_id: parseInt(document.getElementById("catUserId").value),
+                        name: document.getElementById("catNome").value
+                    })
+                });
+                const categoria = await tratarResposta(res);
+                msg.style.color = "#10b981";
+                msg.textContent = `Sucesso! ID Categoria: ${categoria.id}`;
+                document.getElementById("categoryForm").reset();
+            } catch (err) {
+                msg.style.color = "#ef4444";
+                msg.textContent = err.message;
+            }
+        });
 
-    try {
-      if (editingTaskId) {
-        await apiFetch(`/tasks/${editingTaskId}`, { method: 'PATCH', body: JSON.stringify(payload) });
-        toast('Tarefa atualizada ✓');
-      } else {
-        await apiFetch('/tasks', { method: 'POST', body: JSON.stringify({ ...payload, user_id: USER_ID }) });
-        toast('Tarefa criada ✓');
-      }
-      closeModal();
-      loadTasks();
-    } catch { toast('Erro ao salvar tarefa', 'error'); }
-  }
+        // 3. REGISTRO DE TAREFA
+        document.getElementById("taskForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const msg = document.getElementById("taskMsg");
+            msg.style.color = "#3b82f6";
+            msg.textContent = "Processando...";
 
-  // ── Filters ────────────────────────────────────────────
-  function filterByStatus(status) {
-    currentStatus = status;
-    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-    event.currentTarget.classList.add('active');
-    loadTasks();
-  }
+            const catIdVal = document.getElementById("taskCatId").value;
 
-  function setPriority(priority, btn) {
-    currentPriority = priority;
-    document.querySelectorAll('.filter-btn').forEach(el => el.classList.remove('active'));
-    btn.classList.add('active');
-    loadTasks();
-  }
+            try {
+                const res = await fetch(`${API_URL}/tasks`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        user_id: parseInt(document.getElementById("taskUserId").value),
+                        category_id: catIdVal ? parseInt(catIdVal) : null,
+                        title: document.getElementById("taskTitulo").value,
+                        description: document.getElementById("taskDesc").value,
+                        priority: document.getElementById("taskPrioridade").value,
+                        status: "Pendente"
+                    })
+                });
+                await tratarResposta(res);
+                msg.style.color = "#10b981";
+                msg.textContent = "Tarefa criada com sucesso!";
+                document.getElementById("taskForm").reset();
+                
+                const buscaId = document.getElementById("buscaUserId").value;
+                if(buscaId) buscarTarefasDoUsuario();
+            } catch (err) {
+                msg.style.color = "#ef4444";
+                msg.textContent = err.message;
+            }
+        });
 
-  // ── Init ───────────────────────────────────────────────
-  checkApi();
-  loadCategories();
-  loadTasks();
-</script>
+        // 4. METODO DE BUSCA E RENDERIZAÇÃO (ATUALIZADO COM BOTÃO DE CONCLUIR)
+        async function buscarTarefasDoUsuario() {
+            const userId = document.getElementById("buscaUserId").value;
+            const listaContainer = document.getElementById("listaTarefas");
+
+            if (!userId) {
+                alert("Por favor, informe o ID do usuário para realizar a busca.");
+                return;
+            }
+
+            listaContainer.innerHTML = "<p style='color: #64748b; font-style: italic;'>Consultando banco de dados MySQL...</p>";
+
+            try {
+                const res = await fetch(`${API_URL}/users/${userId}/tasks`);
+                if (!res.ok) throw new Error("Não foi possível carregar as tarefas.");
+                
+                const jsonTarefas = await res.json();
+                listaContainer.innerHTML = "";
+
+                if (jsonTarefas.length === 0) {
+                    listaContainer.innerHTML = "<p style='color: #64748b; font-style: italic;'>Nenhuma tarefa encontrada para este usuário no banco.</p>";
+                    return;
+                }
+
+                jsonTarefas.forEach(t => {
+                    const div = document.createElement("div");
+                    div.className = `task-card ${t.status}`;
+                    
+                    // Se a tarefa não estiver concluída, exibe o botão. Se já estiver, omite o botão.
+                    const botaoConcluir = t.status !== "Concluída" 
+                        ? `<button class="btn-done" onclick="concluirTarefa(${t.id})">✔ Concluir</button>` 
+                        : '';
+
+                    div.innerHTML = `
+                        <div class="task-info">
+                            <h4>${t.title}</h4>
+                            <p>${t.description || 'Sem payload descritivo.'}</p>
+                        </div>
+                        <div class="task-actions">
+                            <div class="task-badge">
+                                ${t.priority} | ${t.status}
+                            </div>
+                            ${botaoConcluir}
+                        </div>
+                    `;
+                    listaContainer.appendChild(div);
+                });
+
+            } catch (err) {
+                listaContainer.innerHTML = `<p style="color: #ef4444; font-weight: 500;">Erro: ${err.message}</p>`;
+            }
+        }
+
+        // 5. NOVA FUNÇÃO: CONSUMIR A PORTA PATCH DO FASTAPI
+        async function concluirTarefa(taskId) {
+            try {
+                const res = await fetch(`${API_URL}/tasks/${taskId}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        status: "Concluída"
+                    })
+                });
+                
+                await tratarResposta(res);
+                
+                // Recarrega a lista do usuário automaticamente para refletir a mudança no banco
+                buscarTarefasDoUsuario();
+            } catch (err) {
+                alert("Erro ao concluir tarefa: " + err.message);
+            }
+        }
+    </script>
 </body>
 </html>
