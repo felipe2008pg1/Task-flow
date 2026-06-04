@@ -1,52 +1,68 @@
 from sqlalchemy.orm import Session
-from models import Task, Category, User
-from schemas import TaskCreate, TaskUpdate, CategoryCreate, UserCreate
+from backend.models import User, Category, Task
+from backend.schemas import UserCreate, CategoryCreate, TaskCreate, TaskUpdate
 
-# ── Users ──────────────────────────────────────────────────
-def get_users(db: Session):
-    return db.query(User).all()
-
+# ── OPERAÇÕES DE USUÁRIO ───────────────────────────────────
 def get_user(db: Session, user_id: int):
     return db.query(User).filter(User.id == user_id).first()
 
+def get_user_by_email(db: Session, email: str):
+    return db.query(User).filter(User.email == email).first()
+
+def get_users(db: Session):
+    return db.query(User).all()
+
 def create_user(db: Session, user: UserCreate):
-    db_user = User(**user.model_dump())
+    if get_user_by_email(db, user.email):
+        return None  # Indica conflito de e-mail duplicado
+    db_user = User(name=user.name, email=user.email)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
-# ── Categories ─────────────────────────────────────────────
+# ── OPERAÇÕES DE CATEGORIA ─────────────────────────────────
 def get_categories(db: Session, user_id: int):
     return db.query(Category).filter(Category.user_id == user_id).all()
 
 def create_category(db: Session, category: CategoryCreate):
-    db_cat = Category(**category.model_dump())
-    db.add(db_cat)
+    if not get_user(db, category.user_id):
+        return None  # Indica que o usuário dono não existe
+    db_category = Category(name=category.name, user_id=category.user_id)
+    db.add(db_category)
     db.commit()
-    db.refresh(db_cat)
-    return db_cat
+    db.refresh(db_category)
+    return db_category
 
 def delete_category(db: Session, category_id: int):
-    cat = db.query(Category).filter(Category.id == category_id).first()
-    if cat:
-        db.delete(cat)
+    db_category = db.query(Category).filter(Category.id == category_id).first()
+    if db_category:
+        db.delete(db_category)
         db.commit()
-    return cat
+        return True
+    return False
 
-# ── Tasks ──────────────────────────────────────────────────
+# ── OPERAÇÕES DE TAREFA ─────────────────────────────────────
 def get_tasks(db: Session, user_id: int, status: str = None, priority: str = None):
-    q = db.query(Task).filter(Task.user_id == user_id)
+    query = db.query(Task).filter(Task.user_id == user_id)
     if status:
-        q = q.filter(Task.status == status)
+        query = query.filter(Task.status == status)
     if priority:
-        q = q.filter(Task.priority == priority)
-    return q.order_by(Task.created_at.desc()).all()
-
-def get_task(db: Session, task_id: int):
-    return db.query(Task).filter(Task.id == task_id).first()
+        query = query.filter(Task.priority == priority)
+    return query.all()
 
 def create_task(db: Session, task: TaskCreate):
+    if not get_user(db, task.user_id):
+        return {"error": "user_not_found"}
+        
+    if task.category_id:
+        category = db.query(Category).filter(
+            Category.id == task.category_id, 
+            Category.user_id == task.user_id
+        ).first()
+        if not category:
+            return {"error": "invalid_category"}
+
     db_task = Task(**task.model_dump())
     db.add(db_task)
     db.commit()
@@ -54,25 +70,46 @@ def create_task(db: Session, task: TaskCreate):
     return db_task
 
 def update_task(db: Session, task_id: int, task_data: TaskUpdate):
-    task = db.query(Task).filter(Task.id == task_id).first()
-    if not task:
+    db_task = db.query(Task).filter(Task.id == task_id).first()
+    if not db_task:
         return None
-    for field, value in task_data.model_dump(exclude_unset=True).items():
-        setattr(task, field, value)
+    
+    update_dict = task_data.model_dump(exclude_unset=True)
+    
+    if "category_id" in update_dict and update_dict["category_id"] is not None:
+        category = db.query(Category).filter(
+            Category.id == update_dict["category_id"], 
+            Category.user_id == db_task.user_id
+        ).first()
+        if not category:
+            return {"error": "invalid_category"}
+
+    for key, value in update_dict.items():
+        setattr(db_task, key, value)
+        
     db.commit()
-    db.refresh(task)
-    return task
+    db.refresh(db_task)
+    return db_task
 
 def delete_task(db: Session, task_id: int):
-    task = db.query(Task).filter(Task.id == task_id).first()
-    if task:
-        db.delete(task)
+    db_task = db.query(Task).filter(Task.id == task_id).first()
+    if db_task:
+        db.delete(db_task)
         db.commit()
-    return task
+        return True
+    return False
 
+# ── ESTATÍSTICAS ───────────────────────────────────────────
 def get_stats(db: Session, user_id: int):
     total = db.query(Task).filter(Task.user_id == user_id).count()
-    pending = db.query(Task).filter(Task.user_id == user_id, Task.status == "pending").count()
-    in_progress = db.query(Task).filter(Task.user_id == user_id, Task.status == "in_progress").count()
-    done = db.query(Task).filter(Task.user_id == user_id, Task.status == "done").count()
-    return {"total": total, "pending": pending, "in_progress": in_progress, "done": done}
+    completed = db.query(Task).filter(Task.user_id == user_id, Task.status == "Concluída").count()
+    pending = db.query(Task).filter(Task.user_id == user_id, Task.status == "Pendente").count()
+    in_progress = db.query(Task).filter(Task.user_id == user_id, Task.status == "Em Progresso").count()
+    
+    return {
+        "total_tasks": total,
+        "completed_tasks": completed,
+        "pending_tasks": pending,
+        "in_progress_tasks": in_progress,
+        "completion_rate": (completed / total * 100) if total > 0 else 0
+    }
