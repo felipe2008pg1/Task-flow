@@ -21,7 +21,6 @@ Sistema completo de gerenciamento de tarefas desenvolvido com FastAPI, MySQL e J
 taskflow/
 │
 ├── backend/
-│   ├── __pycache__/
 │   ├── .env
 │   ├── .env.example
 │   ├── crud.py            # Operações CRUD
