@@ -1,21 +1,21 @@
 # TaskFlow 🚀
 
-Sistema completo de gerenciamento de tarefas desenvolvido com FastAPI, MySQL e JavaScript puro.
+A complete task management system developed with FastAPI, MySQL, and pure JavaScript.
 
-## Funcionalidades
+## Features
 
-- Cadastro de usuários
-- Criação de tarefas
-- Atualização de status
-- Exclusão de tarefas
-- Categorias personalizadas
-- Estatísticas por usuário
-- API REST documentada com Swagger
-- Integração entre frontend e backend
+- User registration
+- Task creation
+- Status update
+- Deleting tasks
+- Custom Categories
+- Statistics per user
+- API REST documented with Swagger
+- Integration between frontend and backend
 
 ---
 
-## Estrutura do Projeto
+## Project Estruture
 
 ```text
 taskflow/
@@ -23,43 +23,43 @@ taskflow/
 ├── backend/
 │   ├── .env
 │   ├── .env.example
-│   ├── crud.py            # Operações CRUD
-│   ├── database.py        # Conexão com MySQL
-│   ├── main.py            # Aplicação FastAPI
-│   ├── models.py          # Modelos SQLAlchemy
-│   ├── requirements.txt   # Dependências
+│   ├── crud.py            # Opera CRUD
+│   ├── database.py        # Conexion with MySQL
+│   ├── main.py            # Aplicattion FastAPI
+│   ├── models.py          # SQLAlchemy Models
+│   ├── requirements.txt   # Dependences
 │   ├── schemas.py         # Schemas Pydantic
-│   └── test_db.py         # Teste de conexão com banco
+│   └── test_db.py         # Database connection test
 │
 ├── database/
-│   └── schema.sql         # Script de criação do banco
+│   └── schema.sql         # Database creation script
 │
 ├── frontend/
-│   ├── app.js             # Lógica da interface
+│   ├── app.js             # Interface logic
 │   └── index.html         # Interface web
 │
 ├── .gitignore
 ├── README.md
-└── play.py                # Arquivo auxiliar para testes
+└── play.py                # Auxiliary file for testing
 ```
 
 ---
 
-## Tecnologias Utilizadas
+## Database connection test
 
-| Camada | Tecnologia |
+| Camada | Technology |
 |---------|-----------|
 | Backend | FastAPI |
 | ORM | SQLAlchemy 2.0 |
-| Validação | Pydantic |
-| Banco de Dados | MySQL 8 |
+| Validation | Pydantic |
+| DataBase | MySQL 8 |
 | Driver | PyMySQL |
-| Frontend | HTML5, CSS3 e JavaScript |
+| Frontend | HTML5, CSS3 and JavaScript |
 | API Docs | Swagger UI |
 
 ---
 
-## Pré-requisitos
+## Pre-requisites
 
 - Python 3.11+
 - MySQL 8+
@@ -67,21 +67,21 @@ taskflow/
 
 ---
 
-## Configuração do Banco de Dados
+## Database Configuration
 
-Entre no MySQL:
+Come in MySQL:
 
 ```bash
 mysql -u root -p
 ```
 
-Execute o script:
+Execute the script:
 
 ```bash
 source database/schema.sql
 ```
 
-Ou:
+Or:
 
 ```bash
 mysql -u root -p < database/schema.sql
@@ -89,21 +89,21 @@ mysql -u root -p < database/schema.sql
 
 ---
 
-## Configuração do Backend
+## Backend Configuration
 
-Entre na pasta do backend:
+Come in folder for backend:
 
 ```bash
 cd backend
 ```
 
-Crie o ambiente virtual:
+Create the virtual environment:
 
 ```bash
 python -m venv .venv
 ```
 
-Ative o ambiente:
+Active the environment:
 
 ### Windows
 
@@ -117,19 +117,19 @@ Ative o ambiente:
 source .venv/bin/activate
 ```
 
-Instale as dependências:
+Install the dependences:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Copie o arquivo de exemplo:
+Copy the file exemple:
 
 ```bash
 cp .env.example .env
 ```
 
-Configure as credenciais do banco:
+Config the database credentials:
 
 ```env
 DB_HOST=localhost
@@ -141,7 +141,7 @@ DB_PASSWORD=sua_senha
 
 ---
 
-## Testando a Conexão com o Banco
+## Testing the Conection with the Database
 
 ```bash
 python test_db.py
@@ -149,13 +149,13 @@ python test_db.py
 
 ---
 
-## Executando a API
+## Executing the API
 
 ```bash
 uvicorn main:app --reload
 ```
 
-Acesse:
+Acess:
 
 - API: http://localhost:8000
 - Swagger: http://localhost:8000/docs
@@ -163,22 +163,22 @@ Acesse:
 
 ---
 
-## Executando o Frontend
+## Executing the Frontend
 
-Abra diretamente o arquivo:
+Open directly the file:
 
 ```bash
 frontend/index.html
 ```
 
-Ou utilize um servidor local:
+Or using a server local:
 
 ```bash
 cd frontend
 python -m http.server 3000
 ```
 
-Acesse:
+Acess:
 
 ```text
 http://localhost:3000
@@ -186,27 +186,27 @@ http://localhost:3000
 
 ---
 
-## Endpoints Disponíveis
+## Endpoints Available
 
-| Método | Endpoint | Descrição |
+| Method | Endpoint | Description |
 |----------|----------|----------|
 | GET | / | Health Check |
-| GET | /users | Listar usuários |
-| POST | /users | Criar usuário |
-| GET | /users/{id}/tasks | Listar tarefas |
-| POST | /tasks | Criar tarefa |
-| PATCH | /tasks/{id} | Atualizar tarefa |
-| DELETE | /tasks/{id} | Excluir tarefa |
-| GET | /users/{id}/stats | Estatísticas |
-| GET | /users/{id}/categories | Categorias |
-| POST | /categories | Criar categoria |
-| DELETE | /categories/{id} | Excluir categoria |
+| GET | /users | User list |
+| POST | /users | Create user |
+| GET | /users/{id}/tasks | List Tasks |
+| POST | /tasks | Create Tasks |
+| PATCH | /tasks/{id} | Update Taks |
+| DELETE | /tasks/{id} | Delete Taks |
+| GET | /users/{id}/stats | Statistics |
+| GET | /users/{id}/categories | Categories |
+| POST | /categories | Create categorie |
+| DELETE | /categories/{id} | Delete categorie |
 
 ---
 
-## Exemplos de Requisição
+## Requisition exemple
 
-Criar tarefa:
+Crate Task:
 
 ```bash
 curl -X POST http://localhost:8000/tasks \
@@ -214,7 +214,7 @@ curl -X POST http://localhost:8000/tasks \
 -d '{"title":"Minha tarefa","priority":"high","user_id":1}'
 ```
 
-Atualizar status:
+Update status:
 
 ```bash
 curl -X PATCH http://localhost:8000/tasks/1 \
@@ -222,7 +222,7 @@ curl -X PATCH http://localhost:8000/tasks/1 \
 -d '{"status":"done"}'
 ```
 
-Consultar estatísticas:
+Consult statistics:
 
 ```bash
 curl http://localhost:8000/users/1/stats
@@ -230,6 +230,6 @@ curl http://localhost:8000/users/1/stats
 
 ---
 
-## Autor
+## Owner
 
-Desenvolvido por Felipe.
+Desevelop for Felipe.
