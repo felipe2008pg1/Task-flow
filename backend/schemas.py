@@ -2,7 +2,7 @@ from pydantic import BaseModel, EmailStr
 from typing import Optional, List
 from datetime import datetime
 
-# ── SCHEMAS DE USUÁRIO ─────────────────────────────────────
+# ── USER SCHEMAS ───────────────────────────────────────────
 class UserBase(BaseModel):
     name: str
     email: EmailStr
@@ -17,8 +17,7 @@ class UserOut(UserBase):
     class Config:
         from_attributes = True
 
-
-# ── SCHEMAS DE CATEGORIA ───────────────────────────────────
+# ── CATEGORY SCHEMAS ───────────────────────────────────────
 class CategoryBase(BaseModel):
     name: str
     user_id: int
@@ -34,13 +33,12 @@ class CategoryOut(CategoryBase):
     class Config:
         from_attributes = True
 
-
-# ── SCHEMAS DE TAREFA ──────────────────────────────────────
+# ── TASK SCHEMAS ───────────────────────────────────────────
 class TaskBase(BaseModel):
     title: str
     description: Optional[str] = None
-    status: Optional[str] = "Pendente"
-    priority: Optional[str] = "Média"
+    status: Optional[str] = "Pending"
+    priority: Optional[str] = "Medium"
     due_date: Optional[datetime] = None
     user_id: int
     category_id: Optional[int] = None
