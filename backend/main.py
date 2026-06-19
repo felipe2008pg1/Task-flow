@@ -29,10 +29,10 @@ def list_users(db: Session = Depends(get_db)):
 
 @app.post("/users", response_model=schemas.UserOut, status_code=201)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    novo_usuario = crud.create_user(db, user)
-    if not novo_usuario:
-        raise HTTPException(status_code=400, detail="Este e-mail já está cadastrado no sistema.")
-    return novo_usuario
+    new_user = crud.create_user(db, user)
+    if not new_user:
+        raise HTTPException(status_code=400, detail="This email is already registered in the system.")
+    return new_user
 
 # ── Categories ─────────────────────────────────────────────
 @app.get("/users/{user_id}/categories", response_model=List[schemas.CategoryOut])
@@ -41,16 +41,16 @@ def list_categories(user_id: int, db: Session = Depends(get_db)):
 
 @app.post("/categories", response_model=schemas.CategoryOut, status_code=201)
 def create_category(category: schemas.CategoryCreate, db: Session = Depends(get_db)):
-    nova_categoria = crud.create_category(db, category)
-    if not nova_categoria:
-        raise HTTPException(status_code=404, detail="Não é possível criar a categoria. Usuário não encontrado.")
-    return nova_categoria
+    new_category = crud.create_category(db, category)
+    if not new_category:
+        raise HTTPException(status_code=404, detail="Unable to create category. User not found.")
+    return new_category
 
 @app.delete("/categories/{category_id}", status_code=204)
 def delete_category(category_id: int, db: Session = Depends(get_db)):
     success = crud.delete_category(db, category_id)
     if not success:
-        raise HTTPException(status_code=404, detail="Categoria não encontrada")
+        raise HTTPException(status_code=404, detail="Category not found")
 
 # ── Tasks ──────────────────────────────────────────────────
 @app.get("/users/{user_id}/tasks", response_model=List[schemas.TaskOut])
@@ -64,29 +64,29 @@ def list_tasks(
 
 @app.post("/tasks", response_model=schemas.TaskOut, status_code=201)
 def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db)):
-    resultado = crud.create_task(db, task)
-    if isinstance(resultado, dict) and "error" in resultado:
-        if resultado["error"] == "user_not_found":
-            raise HTTPException(status_code=404, detail="Usuário não encontrado.")
-        if resultado["error"] == "invalid_category":
-            raise HTTPException(status_code=400, detail="A categoria informada não existe ou não pertence a este usuário.")
-    return resultado
+    result = crud.create_task(db, task)
+    if isinstance(result, dict) and "error" in result:
+        if result["error"] == "user_not_found":
+            raise HTTPException(status_code=404, detail="User not found.")
+        if result["error"] == "invalid_category":
+            raise HTTPException(status_code=400, detail="The specified category does not exist or does not belong to this user.")
+    return result
 
 @app.patch("/tasks/{task_id}", response_model=schemas.TaskOut)
 def update_task(task_id: int, task_data: schemas.TaskUpdate, db: Session = Depends(get_db)):
-    resultado = crud.update_task(db, task_id, task_data)
-    if not resultado:
-        raise HTTPException(status_code=404, detail="Tarefa não encontrada")
-    if isinstance(resultado, dict) and "error" in resultado:
-        if resultado["error"] == "invalid_category":
-            raise HTTPException(status_code=400, detail="A categoria informada não pertence a este usuário.")
-    return resultado
+    result = crud.update_task(db, task_id, task_data)
+    if not result:
+        raise HTTPException(status_code=404, detail="Task not found")
+    if isinstance(result, dict) and "error" in result:
+        if result["error"] == "invalid_category":
+            raise HTTPException(status_code=400, detail="The specified category does not belong to this user.")
+    return result
 
 @app.delete("/tasks/{task_id}", status_code=204)
 def delete_task(task_id: int, db: Session = Depends(get_db)):
     success = crud.delete_task(db, task_id)
     if not success:
-        raise HTTPException(status_code=404, detail="Tarefa não encontrada")
+        raise HTTPException(status_code=404, detail="Task not found")
 
 @app.get("/users/{user_id}/stats")
 def get_stats(user_id: int, db: Session = Depends(get_db)):
