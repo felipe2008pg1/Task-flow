@@ -12,7 +12,7 @@ try:
         password=os.getenv("DB_PASSWORD"),
         database=os.getenv("DB_NAME"),
     )
-    print("✅ Conexão com MySQL bem sucedida!")
+    print("✅ Connection with MySQL successful")
     conn.close()
 except Exception as e:
     print("❌ Erro:", e)
