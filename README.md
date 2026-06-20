@@ -211,7 +211,7 @@ Crate Task:
 ```bash
 curl -X POST http://localhost:8000/tasks \
 -H "Content-Type: application/json" \
--d '{"title":"Minha tarefa","priority":"high","user_id":1}'
+-d '{"title":"My Task","priority":"high","user_id":1}'
 ```
 
 Update status:
