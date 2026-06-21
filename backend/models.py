@@ -14,7 +14,6 @@ class User(Base):
     categories = relationship("Category", back_populates="user", cascade="all, delete")
     tasks = relationship("Task", back_populates="user", cascade="all, delete")
 
-
 class Category(Base):
     __tablename__ = "categories"
 
@@ -25,15 +24,14 @@ class Category(Base):
     user = relationship("User", back_populates="categories")
     tasks = relationship("Task", back_populates="category")
 
-
 class Task(Base):
     __tablename__ = "tasks"
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(100), nullable=False)
     description = Column(Text, nullable=True)
-    status = Column(Enum("Pendente", "Em Progresso", "Concluída"), default="Pendente", nullable=False)
-    priority = Column(Enum("Baixa", "Média", "Alta"), default="Média", nullable=False)
+    status = Column(Enum("Pending", "In Progress", "Completed"), default="Pending", nullable=False)
+    priority = Column(Enum("Low", "Medium", "High"), default="Medium", nullable=False)
     due_date = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     
