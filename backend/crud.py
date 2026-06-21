@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from backend.models import User, Category, Task
 from backend.schemas import UserCreate, CategoryCreate, TaskCreate, TaskUpdate
 
-# ── OPERAÇÕES DE USUÁRIO ───────────────────────────────────
+# ── USER OPERATIONS ───────────────────────────────────
 def get_user(db: Session, user_id: int):
     return db.query(User).filter(User.id == user_id).first()
 
@@ -14,20 +14,20 @@ def get_users(db: Session):
 
 def create_user(db: Session, user: UserCreate):
     if get_user_by_email(db, user.email):
-        return None  # Indica conflito de e-mail duplicado
+        return None  # Indicates a duplicate email conflict.
     db_user = User(name=user.name, email=user.email)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
-# ── OPERAÇÕES DE CATEGORIA ─────────────────────────────────
+# ── CATEGORY OPERATIONS ─────────────────────────────────
 def get_categories(db: Session, user_id: int):
     return db.query(Category).filter(Category.user_id == user_id).all()
 
 def create_category(db: Session, category: CategoryCreate):
     if not get_user(db, category.user_id):
-        return None  # Indica que o usuário dono não existe
+        return None  # Indicates that the owner user does not exist.
     db_category = Category(name=category.name, user_id=category.user_id)
     db.add(db_category)
     db.commit()
@@ -42,7 +42,7 @@ def delete_category(db: Session, category_id: int):
         return True
     return False
 
-# ── OPERAÇÕES DE TAREFA ─────────────────────────────────────
+# ── TASK OPERATIONS ─────────────────────────────────────
 def get_tasks(db: Session, user_id: int, status: str = None, priority: str = None):
     query = db.query(Task).filter(Task.user_id == user_id)
     if status:
@@ -99,7 +99,7 @@ def delete_task(db: Session, task_id: int):
         return True
     return False
 
-# ── ESTATÍSTICAS ───────────────────────────────────────────
+# ── STATISTICS ───────────────────────────────────────────
 def get_stats(db: Session, user_id: int):
     total = db.query(Task).filter(Task.user_id == user_id).count()
     completed = db.query(Task).filter(Task.user_id == user_id, Task.status == "Concluída").count()
