@@ -1,4 +1,5 @@
 # TaskFlow 🚀
+![Taskflow](https://img.shields.io/badge/TaskFlow-v1.0-6366f1?style=for-the-badge)
 
 A complete task management system developed with FastAPI, MySQL, and pure JavaScript.
 
